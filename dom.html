@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        /* Add your styling here */
+        .cart-item {
+            margin-top: 50px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .heart {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="shoppingCart">
+    <!-- Sample Cart Items -->
+    <div class="cart-item" data-id="1">
+        <span>Item 1</span>
+        <button onclick="adjustQuantity(1, '+')">+</button>
+        <span class="quantity">1</span>
+        <button onclick="adjustQuantity(1, '-')">-</button>
+        <button onclick="deleteItem(1)">Delete</button>
+        <span class="heart" onclick="likeItem(1)">❤️</span>
+    </div>
+
+    <div class="cart-item" data-id="2">
+        <span>Item 2</span>
+        <button onclick="adjustQuantity(2, '+')">+</button>
+        <span class="quantity">1</span>
+        <button onclick="adjustQuantity(2, '-')">-</button>
+        <button onclick="deleteItem(2)">Delete</button>
+        <span class="heart" onclick="likeItem(2)">🤍</span>
+    </div>
+
+    <!-- Total Price -->
+    <div>
+        <span>Total Price: $<span id="totalPrice">0</span></span>
+    </div>
+</div>
+
+<script>
+    // Sample Cart Data
+    const cartItems = [
+        { id: 1, name: 'Item 1', quantity: 1, price: 10, liked: false },
+        { id: 2, name: 'Item 2', quantity: 1, price: 20, liked: false },
+        { id: 3, name: 'Item 3', quantity: 1, price: 30, liked: false },
+        // Add more items as needed
+    ];
+
+    // Function to adjust quantity
+    function adjustQuantity(itemId, action) {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            if (action === '+' && item.quantity < 10) {
+                item.quantity++;
+            } else if (action === '-' && item.quantity > 1) {
+                item.quantity--;
+            }
+            updateCart();
+        }
+    }
+
+    // Function to delete item
+    function deleteItem(itemId) {
+        const index = cartItems.findIndex(item => item.id === itemId);
+        if (index !== -1) {
+            cartItems.splice(index, 1);
+            updateCart();
+        }
+    }
+
+    // Function to like item
+    function likeItem(itemId) {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            item.liked = !item.liked;
+            updateCart();
+        }
+    }
+
+    // Function to update the cart and calculate total price
+    function updateCart() {
+        let totalPrice = 0;
+        const cartContainer = document.getElementById('shoppingCart');
+        const totalPriceElement = document.getElementById('totalPrice');
+
+        cartContainer.innerHTML = ''; // Clear previous content
+
+        cartItems.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.setAttribute('data-id', item.id);
+
+            cartItem.innerHTML = `
+                <span>${item.name}</span>
+                <button onclick="adjustQuantity(${item.id}, '+')">+</button>
+                <span class="quantity">${item.quantity}</span>
+                <button onclick="adjustQuantity(${item.id}, '-')">-</button>
+                <button onclick="deleteItem(${item.id})">Delete</button>
+                <span class="heart" onclick="likeItem(${item.id})">${item.liked ? '❤️' : '🤍'}</span>
+            `;
+
+            cartContainer.appendChild(cartItem);
+
+            totalPrice += item.quantity * item.price;
+        });
+
+        totalPriceElement.textContent = totalPrice.toFixed(2);
+    }
+
+    // Initial update of the cart
+    updateCart();
+</script>
+
+</body>
+</html>
